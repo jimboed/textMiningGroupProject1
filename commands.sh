@@ -20,6 +20,7 @@
 
 # crawl
 # scrapy crawl <spider>
+
 cd test1 
 scrapy crawl test_spider
 cd ..
