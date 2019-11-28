@@ -21,6 +21,27 @@
 # crawl
 # scrapy crawl <spider>
 
+
+
+
+
+
+
+
+
+
+
 cd test1 
 scrapy crawl test_spider
+# scrapy crawl nbcnews
+
 cd ..
+
+
+
+
+
+
+
+
+# python3 googleSearch2.py

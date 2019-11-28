@@ -1,6 +1,7 @@
 from googlesearch import search 
 import requests 
- 
+import scrapy
+from scrapy.crawler import CrawlerProcess
  
 # import requests
 from bs4 import BeautifulSoup
@@ -33,7 +34,7 @@ links = []
  
 # get links
 for j in search(query, tld="co.in", num=10, stop=20, pause=2): 
-    links.append(j)
+	links.append(j)
 
 print(links)
 
