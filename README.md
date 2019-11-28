@@ -6,3 +6,8 @@ run with:
 
 . commands.sh
 
+
+
+to change the query: 
+edit the "company" and "startingKeywords"
+in the test1>test1>testSpider.py file
