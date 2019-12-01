@@ -31,8 +31,8 @@
 
 
 
-cd test1 
-scrapy crawl test_spider
+ 
+cd test1 && scrapy crawl test_spider -a company=exxon -a terms=fraud,embezzle,launder
 # scrapy crawl nbcnews
 
 cd ..

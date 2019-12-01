@@ -22,10 +22,10 @@ class MySpider2(CrawlSpider):
 
 	def parse_item(self, response):
 
-		filename = response.url.split("/")[-2] + '.html'
+		filename = 'corpus/'+response.url.split("/")[-2] + '.html'
 	 
 		with open(filename, 'wb') as f:
 			f.write(response.body)
-		txtfilename = response.url.split("/")[-2] + '.txt'
+		txtfilename = 'corpus/'+response.url.split("/")[-2] + '.txt'
 		with open(txtfilename, 'w') as tf:
 			tf.write(str(response.xpath('//body//p//text()').extract()))

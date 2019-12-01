@@ -1,0 +1,14 @@
+{% extends "base.html" %} 
+{% from "widgets.html" import createNewQueryForm, displayQueries%}
+
+{% block content %}
+ 
+	{{ createNewQueryForm() }}
+
+
+	{{ displayQueries(spiderQueriesList, "spiderQuery") }}
+		
+ 
+
+
+{% endblock %}
