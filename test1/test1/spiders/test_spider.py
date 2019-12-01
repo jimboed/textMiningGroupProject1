@@ -7,7 +7,7 @@ from scrapy.linkextractors import LinkExtractor
 from googlesearch import search 
 import requests 
 import scrapy
- 
+import time
  
 # import requests
  
@@ -21,10 +21,11 @@ import scrapy
 class TestSpiderSpider(CrawlSpider):
 	name = 'test_spider'
 	 
-	start_urls = ['https://www.npr.org/2019/10/22/772241282/exxon-is-on-trial-accused-of-misleading-investors-about-risks-of-climate-change']
+	start_urls = []
+
 	custom_settings = {
-				'DEPTH_LIMIT': 3,
-	}
+        'DEPTH_LIMIT': 1
+    }
  
 	rules = (
 		Rule(LinkExtractor(), callback='parse_item', follow=True),
@@ -45,8 +46,12 @@ class TestSpiderSpider(CrawlSpider):
 
 
 	def parse_item(self, response):
-	 
-	 
+		print("######################################################################")
+		print(response.meta['depth'])
+		print("######################################################################")
+		
+		# time.sleep(1)
+ 
 		filename = 'corpus/'+response.url.split("/")[-2] + '.html'
 		with open(filename, 'wb') as f:
 			f.write(response.body)
@@ -59,7 +64,7 @@ class TestSpiderSpider(CrawlSpider):
 
 	def buildQuery(self, _company, _terms):
 		# to search 
-
+		
 		company = _company
 
 
@@ -70,7 +75,7 @@ class TestSpiderSpider(CrawlSpider):
 
 
 		# query = '"exxon" (`fraud OR ~ lauder OR ~scandal OR ~indict)'
-		query = '"'+company +'" ('
+		query = '"'+company +'" (~ '
 
 		
 		# build query

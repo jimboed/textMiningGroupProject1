@@ -11,8 +11,7 @@ from sqlalchemy import Column, Date, Integer, String, Boolean
 import os
 
 from sqlalchemy.orm import scoped_session, sessionmaker
-
- 
+import subprocess
  
 # >>>> >>>> >>>> >>>> >>>> >>>> >>>> >>>> >>>> >>>> >>>> >>>> >>>> >>>> >>>> >>>> 
 # spider def
@@ -35,88 +34,25 @@ from scrapy.signalmanager import dispatcher
 from scrapy.utils.project import get_project_settings
 from scrapy import signals
  
-
-
+# import thread
+ 
+import threading
 from scrapy.utils.project import get_project_settings
 
 def submitQueryToSpider(company, terms):
 	# t = terms.split(',')
 	print()
 	print()
-	print("cd test1 && scrapy crawl test_spider -a company="+company+ " -a terms="+terms)
+	print("cd test1 && scrapy crawl test_spider -a company="+company+ " -a terms="+terms + " &>submitQuery.log")
 	print()
 	print()
-	os.system("cd test1 && scrapy crawl test_spider -a company="+company+ " -a terms="+terms)
-	# # settings = get_project_settings()
-	# crawler = CrawlerRunner()
+	command = "cd test1 && scrapy crawl test_spider -a company="+company+ " -a terms="+terms+ " >> submitQuery.log 2>&1 &"
+	# p = subprocess.Popen(["cd", "test1", "&&", "scrapy", "crawl" , "test_spider", "-a", "company=", company , "-a", "terms=",terms])
+	
+	# t = threading.Thread(target=os.system(command))
+	# t.start()
+	os.system(command)
 	 
- 
-
-	# # 'followall' is the name of one of the spiders of the project.
-	# crawler.crawl(TestSpiderSpider, domain='scrapinghub.com')
-	# crawler.start() # the script will block here until the crawling is finished
-
-def buildQuery(_company, _terms):
-	# to search 
-
-	company = _company
-
-	startingKeywords =  _terms
-
-
-	# query = '"exxon" (`fraud OR ~ lauder OR ~scandal OR ~indict)'
-	query = '"'+company +'" (~'
-
-	
-	# build query
-	for i, keyword in enumerate(startingKeywords):
-		query +=  " " + keyword
-		if i < len(startingKeywords) -1:
-			query +=  " OR ~"
-		
-
-	query += ")"
-
-	links = []
-	
-	# get links
-	for j in search(query, tld="co.in", num=10, stop=10, pause=2): 
-		links.append(j)
-
-	print(links)
-	with open("links.txt", 'w') as tf:
-		for x in links:
-			tf.write(x+'\n')
-	return links
- 
- 
-
-# class TestSpiderSpider(scrapy.Spider):
-# 	name = 'test_spider'
-# 	start_urls = buildQuery("exxon", "fraud,indict,laundering")
-	
-
-# 	custom_settings = {'DEPTH_LIMIT': 3,}
- 
-# 	rules = (Rule(LinkExtractor(), callback='parse_item', follow=True),)
- 
- 
-
-
-
-
-# 	def parse_item(self, response):
- 
-
-# 		filename = response.url.split("/")[-2] + '.html'
-# 		with open(filename, 'wb') as f:
-# 			f.write(response.body)
-# 		txtfilename = response.url.split("/")[-2] + '.txt'
-# 		with open(txtfilename, 'w') as tf:
-# 			tf.write(str(response.xpath('//body//p//text()').extract()))
-
-		
-
 # <<<< <<<< <<<< <<<< <<<< <<<< <<<< <<<< <<<< <<<< <<<< <<<< <<<< <<<< <<<< <<<< 
 # <<<< <<<< <<<< <<<< <<<< <<<< <<<< <<<< <<<< <<<< <<<< <<<< <<<< <<<< <<<< <<<< 
 
@@ -249,7 +185,7 @@ def queryInfo(company, terms):
 
 if __name__ == '__main__':
 	db.create_all()
-	app.run()
+	app.run(port=5000)
 	 
 
 
