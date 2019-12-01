@@ -12,8 +12,8 @@ from scrapy.linkextractors import LinkExtractor
 
 class MySpider2(CrawlSpider):
 	name = 'nbcnews'
-	allowed_domains = ['nbcnews.com']
-	start_urls = ['https://www.nbcnews.com/business']
+	# allowed_domains = ['nbcnews.com']
+	start_urls = ['https://www.npr.org/2019/10/22/772241282/exxon-is-on-trial-accused-of-misleading-investors-about-risks-of-climate-change']
 	
 
 	rules = (
