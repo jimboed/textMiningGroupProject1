@@ -9,10 +9,11 @@ import requests
 import scrapy
 import time
  
+ 
 # import requests
  
-
-
+from scrapy import signals
+from scrapy import Spider
 
 
 
@@ -24,8 +25,8 @@ class TestSpiderSpider(CrawlSpider):
 	start_urls = []
 
 	custom_settings = {
-        'DEPTH_LIMIT': 1
-    }
+		'DEPTH_LIMIT': 1
+	}
  
 	rules = (
 		Rule(LinkExtractor(), callback='parse_item', follow=True),
@@ -36,12 +37,24 @@ class TestSpiderSpider(CrawlSpider):
 		print("-------- "+ kwargs.get('company') +' '+  kwargs.get('terms'))
 		company = kwargs.get('company')
 		terms  = kwargs.get('terms')
-		 
-
-
 		self.start_urls = self.buildQuery(company,terms)
-		
+  
 
+
+	@classmethod
+	def from_crawler(cls, crawler, *args, **kwargs):
+		spider = super(TestSpiderSpider, cls).from_crawler(crawler, *args, **kwargs)
+		crawler.signals.connect(spider.spider_closed, signal=signals.spider_closed)
+		return spider
+
+
+
+		
+	def spider_closed(self, reason):
+		# with open("spiderTracker.txt", 'w') as f:
+		# 	f.write('doneCrawling')
+
+		print("DONEZO!!!!!")
 
 
 

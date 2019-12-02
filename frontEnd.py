@@ -38,20 +38,26 @@ from scrapy import signals
  
 import threading
 from scrapy.utils.project import get_project_settings
+ 
+
+import sched, time
+
+ 
 
 def submitQueryToSpider(company, terms):
 	# t = terms.split(',')
+ 
+
 	print()
 	print()
 	print("cd test1 && scrapy crawl test_spider -a company="+company+ " -a terms="+terms + " &>submitQuery.log")
 	print()
 	print()
 	command = "cd test1 && scrapy crawl test_spider -a company="+company+ " -a terms="+terms+ " >> submitQuery.log 2>&1 &"
-	# p = subprocess.Popen(["cd", "test1", "&&", "scrapy", "crawl" , "test_spider", "-a", "company=", company , "-a", "terms=",terms])
-	
-	# t = threading.Thread(target=os.system(command))
-	# t.start()
+	# command = "cd test1 && scrapy crawl test_spider -a company="+company+ " -a terms="+terms
+	 
 	os.system(command)
+
 	 
 # <<<< <<<< <<<< <<<< <<<< <<<< <<<< <<<< <<<< <<<< <<<< <<<< <<<< <<<< <<<< <<<< 
 # <<<< <<<< <<<< <<<< <<<< <<<< <<<< <<<< <<<< <<<< <<<< <<<< <<<< <<<< <<<< <<<< 
@@ -110,11 +116,14 @@ class SpiderQuery(db.Model):
 	terms = db.Column( db.String(61) )
 	has_result = db.Column(db.Boolean, unique=False, default=False)
 
+	has_been_crawled = db.Column(db.Boolean, unique=False, default=False)
+
  
-	def __init__(self,company, terms, has_result=False):
+	def __init__(self,company, terms, has_result=False, has_been_crawled=False):
 		self.company = company
 		self.terms = terms
 		self.has_result = has_result
+		self.has_been_crawled = has_been_crawled
 
 
 
@@ -131,7 +140,7 @@ def hello():
 	spiderQueries = SpiderQuery.query.all()
 
 	spiderQueriesList = []
-	for sQ in spiderQueries: spiderQueriesList.append( { sQ.id: {'company':sQ.company,  'terms': sQ.terms, 'has_result':sQ.has_result} } )
+	for sQ in spiderQueries: spiderQueriesList.append( { sQ.id: {'company':sQ.company,  'terms': sQ.terms, 'has_been_crawled':sQ.has_been_crawled, 'has_result':sQ.has_result} } )
 	print(spiderQueriesList)
 
 	return flask.render_template("query.html", spiderQueriesList=spiderQueriesList)
@@ -139,6 +148,8 @@ def hello():
 
 @app.route('/submitQuery', methods=['POST'])
 def submitQuery():
+	 
+
 	print(flask.request.form)
 
 
@@ -152,13 +163,26 @@ def submitQuery():
 	q = SpiderQuery.query.filter_by(company=c,terms=t ).first()
 	
 	if not q:
-		newSpiderQuery = SpiderQuery(c,t,False)
+		newSpiderQuery = SpiderQuery(c,t,False, False)
 		db.session.add(newSpiderQuery)
 		db.session.commit()
+
 	else:
 		flask.flash('That query has already been submitted. ')
 
-	submitQueryToSpider(c,t)
+	# spiderIsCrawling = checkIfSpiderIsCrawling()
+	# submitQueryToSpider(c, t)
+
+	# if isCrawling:
+
+	# 	print("currently crawling, check later")
+	# else:
+		
+	# 	print("checking for CRAWLs")
+	checkForCrawlJobs()
+
+
+
 
 	return flask.redirect('/')
 
@@ -178,14 +202,62 @@ def queryInfo(company, terms):
 
 	return flask.render_template("queryResult.html")
 
+def checkForCrawlJobs():
+	
+	# s.enter(60, 1, checkForCrawlJobs,())
+
+	print(">>> ChECKING FOR CRAWL JOBS")
+	q = SpiderQuery.query.filter_by(has_been_crawled=False).first()
+	print(q)
+
+	if q is None:
+		print("ALL JOBS CRAWLED")
+
+	else:
+			
+		print(q)
+		submitQueryToSpider(q.company, q.terms)
+		q.has_been_crawled = True
+		db.session.commit()
+
+		# s.enter(60 * 4, 1, checkForCrawlJobs,())
+
+		z = SpiderQuery.query.filter_by(company=q.company, terms=q.terms).first()
+		print(z.has_been_crawled)
 
 
+
+
+# def checkIfSpiderIsCrawling():
+# 	global isCrawling
+# 	with open("test1/spiderTracker.txt", 'r') as f:
+# 		result = f.read()
+	 
+# 		if "doneCrawling" in result:
+# 			isCrawling = False
+
+# 	if isCrawling is False:
+# 		open('test1/spiderTracker.txt', 'w').close()
+# 		with open("test1/spiderTracker.txt", 'r') as f:
+# 			result = f.read()
+# 			print('#######################################################################')
+# 			print(result)
+# 		return False
+# 	else:
+# 		return True
 
 
 
 if __name__ == '__main__':
+ 
 	db.create_all()
+	# s = sched.scheduler(time.time, time.sleep)
+	# s.enter(5, 1, checkForCrawlJobs,())
+	# s.run()
+	
+	print(">>>")
 	app.run(port=5000)
+	print("<<< ")
 	 
 
 
