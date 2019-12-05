@@ -25,7 +25,8 @@ class TestSpiderSpider(CrawlSpider):
 	start_urls = []
 
 	custom_settings = {
-		'DEPTH_LIMIT': 1
+		'DEPTH_LIMIT': 1,
+		'PAGES_PER_DOMAIN': 5
 	}
  
 	rules = (
@@ -42,7 +43,7 @@ class TestSpiderSpider(CrawlSpider):
 		company = kwargs.get('company')
 		terms  = kwargs.get('terms')
 
-		for term in terms.split('\n'):
+		for term in terms.split(','):
 			self.terms_name = self.terms_name + '_'+ term
 
 		self.path = 'corpus/'+company+'/'+self.terms_name+'/'
@@ -103,7 +104,7 @@ class TestSpiderSpider(CrawlSpider):
 
 
 		# query = '"exxon" (`fraud OR ~ lauder OR ~scandal OR ~indict)'
-		query = '"'+company +'" (~ '
+		query = '"'+company +'" (~'
 
 		
 		# build query
