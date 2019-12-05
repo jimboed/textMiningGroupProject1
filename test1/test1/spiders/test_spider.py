@@ -14,7 +14,7 @@ import time
  
 from scrapy import signals
 from scrapy import Spider
-
+import os
 
 
  
@@ -31,13 +31,27 @@ class TestSpiderSpider(CrawlSpider):
 	rules = (
 		Rule(LinkExtractor(), callback='parse_item', follow=True),
 	)
+	company = ''
+	terms = ''
+	terms_name = ''
+	path = ''
  
 	def __init__(self, *args, **kwargs):
 		super(TestSpiderSpider, self).__init__(*args, **kwargs) 
 		print("-------- "+ kwargs.get('company') +' '+  kwargs.get('terms'))
 		company = kwargs.get('company')
 		terms  = kwargs.get('terms')
+
+		for term in terms.split('\n'):
+			self.terms_name = self.terms_name + '_'+ term
+
+		self.path = 'corpus/'+company+'/'+self.terms_name+'/'
+	
+		if not os.path.exists(self.path):
+			os.makedirs(self.path)
+
 		self.start_urls = self.buildQuery(company,terms)
+
   
 
 
@@ -55,6 +69,7 @@ class TestSpiderSpider(CrawlSpider):
 		# 	f.write('doneCrawling')
 
 		print("DONEZO!!!!!")
+		requests.get('http://127.0.0.1:5000/callback/'+self.company+'/'+self.terms)
 
 
 
@@ -65,10 +80,10 @@ class TestSpiderSpider(CrawlSpider):
 		
 		# time.sleep(1)
  
-		filename = 'corpus/'+response.url.split("/")[-2] + '.html'
+		filename = self.path+response.url.split("/")[-2] + '.html'
 		with open(filename, 'wb') as f:
 			f.write(response.body)
-		txtfilename = 'corpus/'+response.url.split("/")[-2] + '.txt'
+		txtfilename = self.path+response.url.split("/")[-2] + '.txt'
 		with open(txtfilename, 'w') as tf:
 			tf.write(str(response.xpath('//body//p//text()').extract()))
 
@@ -109,7 +124,7 @@ class TestSpiderSpider(CrawlSpider):
 		print(query)
 		print(links)
 		
-		with open("corpus/links.txt", 'w') as tf:
+		with open(self.path+"_links.txt", 'w') as tf:
 			tf.write(query+'\n')
 			for x in links:
 				tf.write(x+'\n')

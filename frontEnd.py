@@ -33,8 +33,8 @@ def submitQueryToSpider(company, terms):
 	print("cd test1 && scrapy crawl test_spider -a company="+company+ " -a terms="+terms + " &>submitQuery.log")
 	print()
 	print()
-	command = "cd test1 && scrapy crawl test_spider -a company="+company+ " -a terms="+terms+ " >> submitQuery.log 2>&1 &"
-	# command = "cd test1 && scrapy crawl test_spider -a company="+company+ " -a terms="+terms
+	# command = "cd test1 && scrapy crawl test_spider -a company="+company+ " -a terms="+terms+ " >> submitQuery.log 2>&1 &"
+	command = "cd test1 && scrapy crawl test_spider -a company="+company+ " -a terms="+terms
 	 
 	os.system(command)
 
@@ -206,8 +206,32 @@ def checkForCrawlJobs():
 		print(z.has_been_crawled)
 
 
- 
 
+@app.route('/callback/<company>/<terms>')
+def callback(company, terms):
+	text = '''
+	#### #### #### #### #### #### #### #### #### #### #### #### #### #### #### #### 
+	#### #### #### #### #### #### #### #### #### #### #### #### #### #### #### #### 
+	#### #### #### #### #### #### #### #### #### #### #### #### #### #### #### #### 
+	#### #### #### #### #### #### #### #### #### #### #### #### #### #### #### #### 
+
+	this works.
+
+
+
+
+
+	#### #### #### #### #### #### #### #### #### #### #### #### #### #### #### #### 
+	#### #### #### #### #### #### #### #### #### #### #### #### #### #### #### #### 
+	#### #### #### #### #### #### #### #### #### #### #### #### #### #### #### #### 
+	#### #### #### #### #### #### #### #### #### #### #### #### #### #### #### #### 
+	'''
+
+	print(text)
+	print(company)
+	print(terms)
+	
+	return flask.redirect('/')
 
 if __name__ == '__main__':
  
