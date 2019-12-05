@@ -11,34 +11,14 @@ from sqlalchemy import Column, Date, Integer, String, Boolean
 import os
 
 from sqlalchemy.orm import scoped_session, sessionmaker
-import subprocess
+ 
  
 # >>>> >>>> >>>> >>>> >>>> >>>> >>>> >>>> >>>> >>>> >>>> >>>> >>>> >>>> >>>> >>>> 
 # spider def
 # >>>> >>>> >>>> >>>> >>>> >>>> >>>> >>>> >>>> >>>> >>>> >>>> >>>> >>>> >>>> >>>> 
 
  
- 
-import scrapy
-from scrapy.spiders import CrawlSpider, Rule
-from scrapy.linkextractors import LinkExtractor
-
-from googlesearch import search 
-import requests 
-import scrapy
-from scrapy.crawler import CrawlerRunner
-# from scrapy.crawler import Crawler
- 
-# import requests
-from scrapy.signalmanager import dispatcher
-from scrapy.utils.project import get_project_settings
-from scrapy import signals
- 
-# import thread
- 
-import threading
-from scrapy.utils.project import get_project_settings
- 
+  
 
 import sched, time
 
@@ -226,26 +206,7 @@ def checkForCrawlJobs():
 		print(z.has_been_crawled)
 
 
-
-
-# def checkIfSpiderIsCrawling():
-# 	global isCrawling
-# 	with open("test1/spiderTracker.txt", 'r') as f:
-# 		result = f.read()
-	 
-# 		if "doneCrawling" in result:
-# 			isCrawling = False
-
-# 	if isCrawling is False:
-# 		open('test1/spiderTracker.txt', 'w').close()
-# 		with open("test1/spiderTracker.txt", 'r') as f:
-# 			result = f.read()
-# 			print('#######################################################################')
-# 			print(result)
-# 		return False
-# 	else:
-# 		return True
-
+ 
 
 
 if __name__ == '__main__':
